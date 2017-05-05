@@ -444,8 +444,13 @@
 	(update-screen!))))
 
 (define (handle-key-press evt)
+  (pp evt)
   (let ((key (vector-ref evt 2)))
-    (set! text-input-buffer (string-append text-input-buffer key))
+    (if (string=? key "\177")
+	(set! text-input-buffer
+	      (substring text-input-buffer 0
+			 (- (string-length text-input-buffer) 1)))
+	(set! text-input-buffer (string-append text-input-buffer key)))
     (update-screen!)))
 
 (define (main)
