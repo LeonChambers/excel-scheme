@@ -281,6 +281,9 @@
     (if clicked-cell
 	(begin
 	  (set! selected-cell clicked-cell)
+	  (set! text-input-buffer
+		(get-cell-string (cdr clicked-cell)
+				 (car clicked-cell)))
 	  (update-screen!)))))
 
 (define (zoom-in)
