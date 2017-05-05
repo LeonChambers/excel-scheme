@@ -122,6 +122,7 @@
 (define first-col 1)
 (define zoom-factor 1)
 (define text-input-buffer "")
+(define selected-cell (cons -1 -1))
 
 
 ;;; Absolute text dimensions
@@ -273,9 +274,14 @@
 ;;; Pane definitions
 
 (define (grid-handle-click x y)
-  ;; TODO: Handle the click
-  (pp (cell-at-location (- x (pane-x-left grid-pane))
-			(- y (pane-y-top grid-pane)))))
+  (let ((clicked-cell
+	 (cell-at-location (- x (pane-x-left grid-pane))
+			   (- y (pane-y-top grid-pane)))))
+    (pp clicked-cell)
+    (if clicked-cell
+	(begin
+	  (set! selected-cell clicked-cell)
+	  (update-screen!)))))
 
 (define (zoom-in)
   (set! zoom-factor (* zoom-factor 1.1))
@@ -352,6 +358,20 @@
 	     (col-widths (cdr column-widths)))
       (if (not (null? col-widths))
 	  (begin
+	    (if (and (= r (car selected-cell))
+		     (= c (cdr selected-cell)))
+		(let ((x-right (+ x-left (car col-widths)))
+		      (y-bottom (+ y-top height)))
+		  (x-graphics/set-foreground-color graphics "red")
+		  (pane-draw-line grid-pane x-left y-top x-right
+				  y-top)
+		  (pane-draw-line grid-pane x-right y-top x-right
+				  y-bottom)
+		  (pane-draw-line grid-pane x-right y-bottom x-left
+				  y-bottom)
+		  (pane-draw-line grid-pane x-left y-bottom x-left
+				  y-top)
+		  (x-graphics/set-foreground-color graphics "black")))
 	    (pane-draw-text grid-pane
 			    (+ x-left text-padding-x)
 			    (- (+ y-top height) text-padding-y)
