@@ -492,6 +492,7 @@
   (pp evt)
   (let ((key (vector-ref evt 2)))
     (cond
+     ((= (car selected-cell) -1) unspecific)
      ((string=? key "\177")
       (if (> (string-length text-input-buffer) 0)
 	  (set! text-input-buffer
