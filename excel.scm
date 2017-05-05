@@ -1,4 +1,4 @@
-;; Dummy function to be replaced by actual backend
+;; TODO: Dummy function to be replaced by actual backend
 (define (get-cell-string x y)
   (string-append
    (number->string x)
@@ -489,15 +489,20 @@
 	(update-screen!))))
 
 (define (handle-key-press evt)
-  (pp evt)
   (let ((key (vector-ref evt 2)))
     (cond
      ((= (car selected-cell) -1) unspecific)
-     ((string=? key "\177")
+     ((string=? key "\177") ;; backspace
       (if (> (string-length text-input-buffer) 0)
 	  (set! text-input-buffer
 		(substring text-input-buffer 0
 			   (- (string-length text-input-buffer) 1)))))
+     ((string=? key "\r")
+      ;; TODO: Link this to actual backend
+      (begin
+	(pp `(set ,selected-cell ,text-input-buffer))
+	(set! selected-cell (cons -1 -1))
+	(set! text-input-buffer "")))
      (else
       (set! text-input-buffer (string-append text-input-buffer key)))))
   (update-screen!))
