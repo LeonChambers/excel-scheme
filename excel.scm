@@ -468,12 +468,15 @@
 (define (handle-key-press evt)
   (pp evt)
   (let ((key (vector-ref evt 2)))
-    (if (string=? key "\177")
-	(set! text-input-buffer
-	      (substring text-input-buffer 0
-			 (- (string-length text-input-buffer) 1)))
-	(set! text-input-buffer (string-append text-input-buffer key)))
-    (update-screen!)))
+    (cond
+     ((string=? key "\177")
+      (if (> (string-length text-input-buffer) 0)
+	  (set! text-input-buffer
+		(substring text-input-buffer 0
+			   (- (string-length text-input-buffer) 1)))))
+     (else
+      (set! text-input-buffer (string-append text-input-buffer key)))))
+  (update-screen!))
 
 (define (main)
   (define (loop)
