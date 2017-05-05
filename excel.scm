@@ -300,6 +300,8 @@
 (define zoom-out-pane (make-pane 0 0 0 0
 				 (lambda (x y) (zoom-out))))
 
+(define text-input-chars-per-line)
+
 (define (update-pane-layout!)
   (let* ((top-section-height-px
 	  (* 2 (+ text-height-px text-padding-px)))
@@ -313,7 +315,10 @@
     (set-pane-dimensions! zoom-in-pane in-button-start 0
 			  out-button-start top-section-height)
     (set-pane-dimensions! zoom-out-pane out-button-start 0 1
-			  top-section-height)))
+			  top-section-height)
+    (set! text-input-chars-per-line
+	  (floor->exact (/ (- in-button-start (* 2 text-padding-x))
+			   char-width)))))
 
 
 ;;; UI drawing
@@ -365,9 +370,26 @@
 	      (cdr row-heights))))))
 
 (define (draw-text-input)
-  (pane-draw-text text-input-pane text-padding-x
-		  (+ text-height text-padding-y)
-		  text-input-buffer))
+  (define (lines-to-draw buffer)
+    (if (> (string-length buffer) (* 2 text-input-chars-per-line))
+	(lines-to-draw (string-tail buffer
+				    text-input-chars-per-line))
+	(list (string-head buffer text-input-chars-per-line)
+	      (string-tail buffer text-input-chars-per-line))))
+  (define (draw-first-line line)
+    (pane-draw-text text-input-pane text-padding-x
+		    (+ text-height text-padding-y)
+		    line))
+  (define (draw-second-line line)
+    (pane-draw-text text-input-pane text-padding-x
+		    (+ (* 2 text-height) text-padding-y)
+		    line))
+  (define (draw-lines first second)
+    (draw-first-line first)
+    (draw-second-line second))
+  (if (> (string-length text-input-buffer) text-input-chars-per-line)
+      (apply draw-lines (lines-to-draw text-input-buffer))
+      (draw-first-line text-input-buffer)))
 
 (define (pane-draw-magnifying-glass pane width height)
   (pane-draw-line pane (* 0.1 width) (* 0.9 height)
