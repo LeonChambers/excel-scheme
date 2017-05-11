@@ -49,12 +49,10 @@
 	   textbox
 	   (string-head buffer (- (string-length buffer) 1)))))
      ((string=? key "\r")
-;;      (ignore-errors
-      ;;       (lambda ()
       (begin
 	 (trigger-event (list event-type:text-submitted textbox
 			      buffer))
-	 (set-textbox-input-buffer! textbox "")));))
+	 (set-textbox-input-buffer! textbox "")))
      (else
       (set-textbox-input-buffer! textbox (string-append buffer key))))))
 
