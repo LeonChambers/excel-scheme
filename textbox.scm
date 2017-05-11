@@ -44,15 +44,17 @@
   (let ((buffer (textbox-input-buffer textbox)))
     (cond
      ((string=? key "\177")
-      (if (> (string-length buffer))
+      (if (> (string-length buffer) 0)
 	  (set-textbox-input-buffer!
 	   textbox
 	   (string-head buffer (- (string-length buffer) 1)))))
      ((string=? key "\r")
+;;      (ignore-errors
+      ;;       (lambda ()
       (begin
-	(trigger-event (list event-type:text-submitted textbox
-			     buffer))
-	(set-textbox-input-buffer! textbox "")))
+	 (trigger-event (list event-type:text-submitted textbox
+			      buffer))
+	 (set-textbox-input-buffer! textbox "")));))
      (else
       (set-textbox-input-buffer! textbox (string-append buffer key))))))
 

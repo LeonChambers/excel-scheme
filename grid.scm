@@ -120,8 +120,7 @@
 	    (if (= row-offset num-rows)
 		max-width
 		(lp (max (string-length
-			  (getter (+ first-row row-offset)
-				  col-num))
+			  (getter col-num (+ first-row row-offset)))
 			 max-width)
 		    (+ row-offset 1)))))
 	(string-display-length column-string-width))

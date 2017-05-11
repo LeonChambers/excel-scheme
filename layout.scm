@@ -2,7 +2,7 @@
 
 ;; Should be triggered when the layout of the panes underlying the UI
 ;; elements is changed, which shoould occur whenever the dimensions
-;; are change.d Events of this type have no parameters
+;; are changed. Events of this type have no parameters
 (define event-type:layout-changed 'layout-changed)
 
 ;; The specific layout of UI components for this application
@@ -47,6 +47,9 @@
        event-type:text-submitted
        (lambda (textbox text)
 	 (if selected-cell
-	     (set-innards! (car selected-cell) (cdr selected-cell) text)
+	     (begin
+	       (set-innards! (car selected-cell) (cdr selected-cell)
+			     text)
+	       (grid-update-dimensions! grid))
 	     (run-global! text))
 	 (trigger-event (list event-type:cell-selected grid #f)))))))
